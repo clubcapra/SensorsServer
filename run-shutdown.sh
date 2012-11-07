@@ -1,4 +1,4 @@
 #!/bin/bash
 
-python src/shutdown_server.py
+python code/shutdown_server.py
 

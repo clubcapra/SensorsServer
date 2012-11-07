@@ -1,4 +1,4 @@
 #!/bin/bash
 
-python src/server-main.py $1
+python code/server-main.py $1
 
