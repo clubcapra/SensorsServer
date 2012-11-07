@@ -5,9 +5,11 @@ import socket
 import sys
 import time
 import traceback
-from config import Config
 
-from communication import Communication
+import config
+
+from comm.communication import Communication
+from comm.serial_com_mock import SerialComMock
 
 class EchoClientHandler(SocketServer.BaseRequestHandler):
     def handle(self):
@@ -24,12 +26,9 @@ class EchoClientHandler(SocketServer.BaseRequestHandler):
 # To enable a mock for the serial
 import sys
 sys.path.append("tests/")
-from serial_com_mock import SerialComMock
 
 # The communication interface to the sensors is defined globally
-cfg = Config()
-cfg.load("conf/simulation.conf")
-if cfg.getValues()["simulation"].lower() == "true":
+if config.simulation.lower() == "true":
     comm = Communication(SerialComMock()) # a mocked serial implementation
 else:
     comm = Communication() # real serial
@@ -103,12 +102,9 @@ def main(PORT):
         server.shutdown()
         comm.shutdown()
         print "server stopped"
-        
-
-
 
 if __name__ == "__main__":
-    PORT = 53001
+    PORT = config.tcp_port
     if len(sys.argv) > 1:
         PORT = int(sys.argv[1])
     main(PORT)
