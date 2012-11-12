@@ -28,7 +28,7 @@ class Communication:
 
     def init(self):
 
-        if config.debug.lower() == "true":
+        if config.debug is True:
             self.debug = Debug()
         self.serial.connect( \
                 config.serial_port, \

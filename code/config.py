@@ -1,17 +1,21 @@
 # true or false
-simulation="True"
+simulation=True
 
 # The default baudrate is 19200. 
 # It should not change since its defined this way on the hardware.
 
-serial_port="/dev/ttyUSB1003"
+serial_port="/dev/ttyUSB0"
 baudrate=19200
 readTimeout=1000
-debug="True"
+debug=True
 
 # TCP server
+use_tcp_server=False
 tcp_port=53001
 
+# Websocket
+use_websockets=True
+websocket_port=53002
 
 # This section is intended to represent a mapping of the different 
 # sensors and their association with their alimentation id

@@ -6,6 +6,11 @@ import sys
 import time
 import traceback
 
+import tornado.httpserver
+import tornado.websocket
+import tornado.ioloop
+import tornado.web
+
 import config
 
 from comm.communication import Communication
@@ -28,7 +33,7 @@ import sys
 sys.path.append("tests/")
 
 # The communication interface to the sensors is defined globally
-if config.simulation.lower() == "true":
+if config.simulation is True:
     comm = Communication(SerialComMock()) # a mocked serial implementation
 else:
     comm = Communication() # real serial
@@ -79,7 +84,7 @@ class ReusableTCPServer(SocketServer.TCPServer):
 
 
 class ThreadedTCPServer(SocketServer.ThreadingMixIn, ReusableTCPServer):
-	pass
+    pass
 
 def main(PORT):
     
@@ -91,7 +96,7 @@ def main(PORT):
         time.sleep(1)    
     except:
         pass
-		#Executed when no other servers are running on this port
+        #Executed when no other servers are running on this port
 
     server = ThreadedTCPServer( ("", PORT), SensorsClientHandler)
     print "starting server on port " + str(PORT) + "..."
@@ -103,9 +108,35 @@ def main(PORT):
         comm.shutdown()
         print "server stopped"
 
+class WSHandler(tornado.websocket.WebSocketHandler):
+
+    def open(self):
+        print 'new connection on websocket'
+        self.write_message("Hello World")
+      
+    def on_message(self, data):
+        print 'websocket: message received %s' % data
+        comm.sendCommand(data)
+ 
+    def on_close(self):
+        print 'websocket connection closed'
+ 
+class WebSocketService:
+    def __init__(self, port):
+        print "opening websocket on port " + str(port)
+        application = tornado.web.Application([(r'/ws', WSHandler),])
+        http_server = tornado.httpserver.HTTPServer(application)
+        http_server.listen(port)
+        tornado.ioloop.IOLoop.instance().start()
+
 if __name__ == "__main__":
-    PORT = config.tcp_port
-    if len(sys.argv) > 1:
-        PORT = int(sys.argv[1])
-    main(PORT)
+
+    if config.use_tcp_server is True:
+        PORT = config.tcp_port
+        if len(sys.argv) > 1:
+            PORT = int(sys.argv[1])
+        main(PORT)
+
+    if config.use_websockets is True:
+        webSocketService = WebSocketService(config.websocket_port)
 
