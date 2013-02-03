@@ -10,11 +10,11 @@ readTimeout=1000
 debug=True
 
 # TCP server
-use_tcp_server=False
+use_tcp_server=True
 tcp_port=53001
 
 # Websocket
-use_websockets=True
+use_websockets=False
 websocket_port=53002
 
 # This section is intended to represent a mapping of the different 

@@ -5,6 +5,8 @@ import socket
 import sys
 import time
 import traceback
+import thread
+import re
 
 import tornado.httpserver
 import tornado.websocket
@@ -42,42 +44,42 @@ comm.init()
 class SensorsClientHandler(SocketServer.BaseRequestHandler):
 
     def handle(self):
-        # TODO add a try catch and return stack trace to socket
-        # http://docs.python.org/library/traceback.html
+        print "client connected"
         try:
             self.inner_handle()
         except:
             traceback.print_exc(file=sys.stdout)
-            message = "Invalid command"
+            message = "Command error"
             self.request.send(message)
             stacktrace = repr(traceback.format_stack())
             self.request.send(stacktrace)
 
-
     def inner_handle(self):
-        print "client connected"
         data = None
         while not data:
             data = self.request.recv(1024)
-            break
 
         print "data received: " + str(data)
-
+        
         data = data.replace("\n", "")
-        # TODO encure the comm is still connected or try reconnection on send command
         
         if data == "shutdown-server":
             self.server.shutdown()
             print "server stopped"
             
+        p1 = re.compile("[SETset]+ [0-9a-zA-Z]+ [ONFonf]+")
+        p2 = re.compile("[GETget]+ [0-9a-zA-Z]+")
         
-        isValidCommand, message = comm.sendCommand(data)
-        if not message == None:
-            print "sending response: "
-            print message
-            self.request.send(message)
+        if p1.match(data) is not None or p2.match(data) is not None:
+            isValidCommand, message = comm.sendCommand(data)
+            if not message == None:
+                print "sending response: "
+                print message
+                self.request.send(message)
+        else:
+            print "Invalid command"
+            self.request.send("Error: invalid message format\n")
 
-        print "client disconnected"
 
 class ReusableTCPServer(SocketServer.TCPServer):
     allow_reuse_address = True
@@ -86,7 +88,7 @@ class ReusableTCPServer(SocketServer.TCPServer):
 class ThreadedTCPServer(SocketServer.ThreadingMixIn, ReusableTCPServer):
     pass
 
-def main(PORT):
+def mainSocketServer(PORT):
     
     try:
         sock = socket.create_connection(("127.0.0.1", PORT))
@@ -102,11 +104,12 @@ def main(PORT):
     print "starting server on port " + str(PORT) + "..."
     try:
         server.serve_forever()
-        comm.shutdown();
     except KeyboardInterrupt:
         server.shutdown()
-        comm.shutdown()
-        print "server stopped"
+        raise
+        
+    comm.shutdown()
+    print "server stopped"
 
 class WSHandler(tornado.websocket.WebSocketHandler):
 
@@ -131,12 +134,14 @@ class WebSocketService:
 
 if __name__ == "__main__":
 
+    if config.use_websockets is True:
+        thread.start_new_thread(WebSocketService(config.websocket_port))
+        
     if config.use_tcp_server is True:
         PORT = config.tcp_port
         if len(sys.argv) > 1:
             PORT = int(sys.argv[1])
-        main(PORT)
+         
+        mainSocketServer(PORT)
 
-    if config.use_websockets is True:
-        webSocketService = WebSocketService(config.websocket_port)
 

@@ -22,3 +22,6 @@ class SerialComMock:
         print "writing(sim): " + data
         self.written.append(data)
 
+    def close(self):
+        print "closing serial com"
+        pass
