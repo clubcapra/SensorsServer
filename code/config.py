@@ -14,7 +14,7 @@ use_tcp_server=True
 tcp_port=53001
 
 # Websocket
-use_websockets=False
+use_websockets=True
 websocket_port=53002
 
 # This section is intended to represent a mapping of the different 

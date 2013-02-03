@@ -59,13 +59,13 @@ class SensorsClientHandler(SocketServer.BaseRequestHandler):
         while not data:
             data = self.request.recv(1024)
 
-        print "data received: " + str(data)
+        print "socket: data received: " + str(data)
         
         data = data.replace("\n", "")
         
         if data == "shutdown-server":
             self.server.shutdown()
-            print "server stopped"
+            print "socket server stopped"
             
         p1 = re.compile("[SETset]+ [0-9a-zA-Z]+ [ONFonf]+")
         p2 = re.compile("[GETget]+ [0-9a-zA-Z]+")
@@ -73,7 +73,7 @@ class SensorsClientHandler(SocketServer.BaseRequestHandler):
         if p1.match(data) is not None or p2.match(data) is not None:
             isValidCommand, message = comm.sendCommand(data)
             if not message == None:
-                print "sending response: "
+                print "sending socket response: "
                 print message
                 self.request.send(message)
         else:
@@ -115,11 +115,15 @@ class WSHandler(tornado.websocket.WebSocketHandler):
 
     def open(self):
         print 'new connection on websocket'
-        self.write_message("Hello World")
+        self.write_message("Capra 6: Bienvenue")
       
     def on_message(self, data):
         print 'websocket: message received %s' % data
-        comm.sendCommand(data)
+        isValidCommand, message = comm.sendCommand(data)
+        if not message == None:
+                print "sending websocket response: "
+                print message
+                self.write_message(message)
  
     def on_close(self):
         print 'websocket connection closed'
@@ -135,7 +139,7 @@ class WebSocketService:
 if __name__ == "__main__":
 
     if config.use_websockets is True:
-        thread.start_new_thread(WebSocketService(config.websocket_port))
+        thread.start_new_thread(WebSocketService, (config.websocket_port,))
         
     if config.use_tcp_server is True:
         PORT = config.tcp_port

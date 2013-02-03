@@ -1,11 +1,11 @@
 <!doctype html>
 <html>
   <head>
-    <title>WebSockets Hello World</title>
+    <title>Panneau de contrôle - Capra 6</title>
     <meta charset="utf-8" />
     <style type="text/css">
       body {
-        text-align: center;
+        text-align: left;
         min-width: 500px;
       }
     </style>
@@ -13,31 +13,81 @@
     <script>
 
         var ws;
-        function t(){
-            if (document.getElementById("check1").checked){
+        function lights(){
+            if (document.getElementById("checkLights").checked){
+                ws.send("set lights on");
+            } else {
+                ws.send("set lights off");
+            }
+        }
+        
+        function gps(){
+            if (document.getElementById("checkGps").checked){
                 ws.send("set gps on");
             } else {
                 ws.send("set gps off");
             }
         }
+        
+        function imu(){
+            if (document.getElementById("checkImu").checked){
+                ws.send("set imu on");
+            } else {
+                ws.send("set imu off");
+            }
+        }
+        
+        function motors(){
+            if (document.getElementById("checkMotors").checked){
+                ws.send("set motors on");
+            } else {
+                ws.send("set motors off");
+            }
+        }
+        
+        function rangefinder(){
+            if (document.getElementById("checkRangefinder").checked){
+                ws.send("set rangefinder on");
+            } else {
+                ws.send("set rangefinder off");
+            }
+        }
+        
+        function camera(){
+            if (document.getElementById("checkCamera").checked){
+                ws.send("set camera on");
+            } else {
+                ws.send("set camera off");
+            }
+        }
+        
+        function tension(){
+            ws.send("get tension");
+        }
+        
+        function temperature(){
+            ws.send("get temperature");
+        }
+        
+        function current(){
+            ws.send("get current");
+        }
+
 
       $(document).ready(function () {
- 
-
-
  
         $("#open").click(function(evt) {
           evt.preventDefault();
  
           var host = $("#host").val();
           var port = $("#port").val();
-          var uri = $("#uri").val();
+          var uri = "/ws";
  
           ws = new WebSocket("ws://" + host + ":" + port + uri);
  
-          ws.onmessage = function(evt) {alert("message received: " + evt.data); };
+          ws.onmessage = function(evt) {alert(evt.data); };
  
-          ws.onclose = function(evt) { alert("Connection close"); };
+          ws.onclose = function(evt) { alert("Panneau de contrôle déconnecté"); };
  
           ws.onopen = function(evt) { 
             $("#host").css("background", "#00ff00"); 
@@ -51,16 +101,24 @@
   </head>
  
   <body>
-    <h1>WebSockets Hello World</h1>
+    <h1>Panneau de contrôle - Capra 6</h1>
     <div>
-      <label for="host">host:</label>
+      <label for="host">Host:</label>
       <input type="text" id="host" value="localhost" style="background:#ff0000;"/><br />
-      <label for="port">port:</label>
+      <label for="port">Port:</label>
       <input type="text" id="port" value="53002" style="background:#ff0000;"/><br />
-      <label for="uri">uri:</label>
-      <input type="text" id="uri" value="/ws" style="background:#ff0000;"/><br />
-      <input type="submit" id="open" value="open" /> <br />
-      <input type="checkbox" id="check1" value="toggle" onclick="t()">Toggle lights
+      <input type="submit" id="open" value="Connect" /> <br /> <br/>
+      <input type="checkbox" id="checkLights" value="toggle" onclick="lights()" />Lumières<br/>
+      <input type="checkbox" id="checkGps" value="toggle" onclick="gps()" />GPS<br/>
+      <input type="checkbox" id="checkCamera" value="toggle" onclick="camera()" />Camera<br/>
+      <input type="checkbox" id="checkRangefinder" value="toggle" onclick="rangefinder()" />Rangefinder<br/>
+      <input type="checkbox" id="checkImu" value="toggle" onclick="imu()" />Imu<br/>
+      <input type="checkbox" id="checkMotors" value="toggle" onclick="motors()" />Moteurs<br/>
+      <br/><br/>
+      <input type="button" id="getCurrent" value="Courant" onclick="current()"/>
+      <input type="button" id="getTemperature" value="Température" onclick="temperature()"/>
+      <input type="button" id="getCurrent" value="Tension" onclick="tension()"/>
+      
     </div>
   </body>
 </html>
