@@ -51,11 +51,11 @@ class Communication:
 
         try:
             if command == "SET":
-                self.serial.write(command + " " + deviceId + " " + state.upper() + "\n")
+                self.serial.write(command + " " + str(deviceId) + " " + state.upper() + "\n")
                 return True, None
 
             if command == "GET":
-                self.serial.write(command + " " + deviceId + " " + "\n")
+                self.serial.write(command + " " + str(deviceId) + " " + "\n")
                 statusInformation = self.serial.read(1024)
                 return True, statusInformation
                 

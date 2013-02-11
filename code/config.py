@@ -1,5 +1,5 @@
 # true or false
-simulation=True
+simulation=False
 
 # The default baudrate is 19200. 
 # It should not change since its defined this way on the hardware.
@@ -29,15 +29,22 @@ websocket_port=53002
 # Ids goes from 0 to 7
 #
 
-Camera = "N0"
-RangeFinder = "N1"
-GPS = "N2"
-IMU = "N3"
-Lights = "N4"
-Motors = "N5"
-S6 = "N6"
-S7 = "N7"
+Fan = 0
+IMU = 1
+Camera = 2
+GPS = 3
+Switch = 4
+Lights = 5
+RangeFinder = 6
+Laptop = 7
+Motors = 8
 
-Tension = "A0"
-Current = "A1"
-Temperature = "A2"
+Tension = 9
+Current = 10
+Temperature = 11
+
+EstopManual = 12
+EstopRemote = 13
+
+Mode = 14
+

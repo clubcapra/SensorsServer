@@ -23,9 +23,7 @@ GET [id]\n
 
 [state] = ON or OFF
 [id] = address of the device
-    N_ for digital binary sensors like the GPS and the E-stop (N0, N1, etc.)
-    A_ for analog data like the battery tension (A0, A1, etc.)
-    The GET returns values accordingly (ON/OFF or an analog value)
+    The GET returns values accordingly to the device type(ON/OFF or an analog value)
 
 = References
 
