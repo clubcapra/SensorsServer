@@ -13,53 +13,48 @@
     <script>
 
         var ws;
-        function lights(){
-            if (document.getElementById("checkLights").checked){
-                ws.send("set lights on");
-            } else {
-                ws.send("set lights off");
-            }
+        
+        //Sensors -- Order not important
+        var sensors = new Array();
+        sensors[0] = "lights";
+        sensors[1] = "gps";
+        sensors[2] = "fan";
+        sensors[3] = "imu";
+        sensors[4] = "camera";
+        sensors[5] = "switch";
+        sensors[6] = "rangefinder";
+        sensors[7] = "tension";
+        sensors[8] = "current";
+        sensors[9] = "temperature";
+        sensors[10] = "estopManual";
+        sensors[11] = "estopRemote";
+        sensors[12] = "mode";
+        
+        function init(){
+            
+           // getAllSensors();
         }
         
-        function gps(){
-            if (document.getElementById("checkGps").checked){
-                ws.send("set gps on");
-            } else {
-                ws.send("set gps off");
-            }
+        function getAllSensors(){
+            //ws.send("get lights");
+            //waiting = true;
+            
+            //ws.send("get gps");
+            //ws.send("get imu");
+            //ws.send("get motors");
+            //ws.send("get rangefinder");
+            //ws.send("get camera");
+            
         }
         
-        function imu(){
-            if (document.getElementById("checkImu").checked){
-                ws.send("set imu on");
+        function update(checkbox, id){
+            if (checkbox.checked){
+                ws.send("set " + sensors[id] +  " on");
             } else {
-                ws.send("set imu off");
+                ws.send("set " + sensors[id] +  " off");
             }
         }
-        
-        function motors(){
-            if (document.getElementById("checkMotors").checked){
-                ws.send("set motors on");
-            } else {
-                ws.send("set motors off");
-            }
-        }
-        
-        function rangefinder(){
-            if (document.getElementById("checkRangefinder").checked){
-                ws.send("set rangefinder on");
-            } else {
-                ws.send("set rangefinder off");
-            }
-        }
-        
-        function camera(){
-            if (document.getElementById("checkCamera").checked){
-                ws.send("set camera on");
-            } else {
-                ws.send("set camera off");
-            }
-        }
+       
         
         function tension(){
             ws.send("get tension");
@@ -78,14 +73,16 @@
  
         $("#open").click(function(evt) {
           evt.preventDefault();
- 
+          
           var host = $("#host").val();
           var port = $("#port").val();
           var uri = "/ws";
- 
+        
           ws = new WebSocket("ws://" + host + ":" + port + uri);
  
-          ws.onmessage = function(evt) {alert(evt.data); };
+          ws.onmessage = function(evt) {
+            alert(evt.data)
+          };
  
           ws.onclose = function(evt) { alert("Panneau de contrôle déconnecté"); };
  
@@ -100,25 +97,37 @@
     </script>
   </head>
  
-  <body>
+  <body onLoad="init()">
     <h1>Panneau de contrôle - Capra 6</h1>
     <div>
       <label for="host">Host:</label>
       <input type="text" id="host" value="localhost" style="background:#ff0000;"/><br />
       <label for="port">Port:</label>
+    </div>
+    
+    <div>
       <input type="text" id="port" value="53002" style="background:#ff0000;"/><br />
       <input type="submit" id="open" value="Connect" /> <br /> <br/>
-      <input type="checkbox" id="checkLights" value="toggle" onclick="lights()" />Lumières<br/>
-      <input type="checkbox" id="checkGps" value="toggle" onclick="gps()" />GPS<br/>
-      <input type="checkbox" id="checkCamera" value="toggle" onclick="camera()" />Camera<br/>
-      <input type="checkbox" id="checkRangefinder" value="toggle" onclick="rangefinder()" />Rangefinder<br/>
-      <input type="checkbox" id="checkImu" value="toggle" onclick="imu()" />Imu<br/>
-      <input type="checkbox" id="checkMotors" value="toggle" onclick="motors()" />Moteurs<br/>
+      <input type="checkbox" value="toggle" onclick="update(this, 0)" />Lumières<br/>
+      <input type="checkbox" value="toggle" onclick="update(this, 1)" />GPS<br/>
+      <input type="checkbox" value="toggle" onclick="update(this, 2)" />Fans<br/>
+      <input type="checkbox" value="toggle" onclick="update(this, 3)" />Imu<br/>
+      <input type="checkbox" value="toggle" onclick="update(this, 4)" />Caméra<br/>
+      <input type="checkbox" value="toggle" onclick="update(this, 5)" />Switch Ethernet<br/>
+      <input type="checkbox" value="toggle" onclick="update(this, 6)" />Rangefinder<br/>
+      <input type="checkbox" value="toggle" onclick="update(this, 7)" />Tension<br/>
+      <input type="checkbox" value="toggle" onclick="update(this, 8)" />Courant<br/>
+      <input type="checkbox" value="toggle" onclick="update(this, 9)" />Température<br/>
+      <input type="checkbox" value="toggle" onclick="update(this, 10)" />E-Stop manuel<br/>
+      <input type="checkbox" value="toggle" onclick="update(this, 11)" />E-Stop automatique<br/>
+      <input type="checkbox" value="toggle" onclick="update(this, 12)" />Mode autonome (non supporté)<br/>
+      
+      
       <br/><br/>
       <input type="button" id="getCurrent" value="Courant" onclick="current()"/>
       <input type="button" id="getTemperature" value="Température" onclick="temperature()"/>
       <input type="button" id="getCurrent" value="Tension" onclick="tension()"/>
-      
+    </div>
     </div>
   </body>
 </html>

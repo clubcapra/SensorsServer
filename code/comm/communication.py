@@ -56,7 +56,9 @@ class Communication:
 
             if command == "GET":
                 self.serial.write(command + " " + str(deviceId) + " " + "\n")
+                print "reading"
                 statusInformation = self.serial.read(1024)
+                print "read"
                 return True, statusInformation
                 
         except:

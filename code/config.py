@@ -6,7 +6,7 @@ simulation=False
 
 serial_port="/dev/ttyUSB0"
 baudrate=19200
-readTimeout=1000
+readTimeout=0.6 #en sec
 debug=True
 
 # TCP server
@@ -36,15 +36,13 @@ GPS = 3
 Switch = 4
 Lights = 5
 RangeFinder = 6
-Laptop = 7
-Motors = 8
 
-Tension = 9
-Current = 10
-Temperature = 11
+Tension = 7
+Current = 8
+Temperature = 9
 
-EstopManual = 12
-EstopRemote = 13
+EstopManual = 10
+EstopRemote = 11
 
-Mode = 14
+Mode = 12
 
