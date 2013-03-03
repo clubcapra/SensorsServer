@@ -23,30 +23,25 @@
         sensors[4] = "camera";
         sensors[5] = "switch";
         sensors[6] = "rangefinder";
-        sensors[7] = "tension";
-        sensors[8] = "current";
-        sensors[9] = "temperature";
-        sensors[10] = "estopManual";
-        sensors[11] = "estopRemote";
-        sensors[12] = "mode";
+        sensors[7] = "estopManual";
+        sensors[8] = "estopRemote";
+        sensors[9] = "mode";
         
-        function init(){
-            
-           // getAllSensors();
-        }
+        var analogs = new Array();
+        analogs[0] = "tension";
+        analogs[1] = "temperature";
+        analogs[2] = "current";
         
-        function getAllSensors(){
-            //ws.send("get lights");
-            //waiting = true;
-            
-            //ws.send("get gps");
-            //ws.send("get imu");
-            //ws.send("get motors");
-            //ws.send("get rangefinder");
-            //ws.send("get camera");
+        function getAllComponents(){
+            for(var i = 0; i < sensors.length; i++){
+                ws.send("get " + sensors[i]);      
+            }
+            for(var i = 0; i < analogs.length; i++){
+                ws.send("get " + analogs[i]);      
+            }
             
         }
-        
+
         function update(checkbox, id){
             if (checkbox.checked){
                 ws.send("set " + sensors[id] +  " on");
@@ -67,6 +62,13 @@
         function current(){
             ws.send("get current");
         }
+        
+        function onoff2bool(onoff){
+            if(onoff.indexof("ON") != -1)
+                return true;
+            else
+                return false;
+        }
 
 
       $(document).ready(function () {
@@ -81,7 +83,27 @@
           ws = new WebSocket("ws://" + host + ":" + port + uri);
  
           ws.onmessage = function(evt) {
-            alert(evt.data)
+          
+            var componentName = evt.data.split(" ")[0];
+
+            //If its a sensor
+            if($.inArray(componentName, sensors) != -1){
+                for(var i = 0; i <	sensors.length; i++){
+                    if(componentName == sensors[i]){
+                        document.getElementById(componentName).checked=onoff2bool(evt.data.split(" ")[1])
+                    }
+                }
+             
+             //if its an analog lecture
+            }else if($.inArray(componentName, analogs) != -1){
+                for(var i = 0; i <	analogs.length; i++){
+                    if(componentName == analogs[i]){
+                        document.getElementById(componentName).value=evt.data.split(" ")[1]
+                    }
+                }
+            }else{        
+                alert("Unknown input received:" + evt.data);
+            }
           };
  
           ws.onclose = function(evt) { alert("Panneau de contrôle déconnecté"); };
@@ -90,6 +112,11 @@
             $("#host").css("background", "#00ff00"); 
             $("#port").css("background", "#00ff00"); 
             $("#uri").css("background", "#00ff00");
+            
+            getAllComponents();
+            
+            //var tid = setInterval(getAllComponents, 1000);
+            
           };
       });
       });
@@ -97,36 +124,30 @@
     </script>
   </head>
  
-  <body onLoad="init()">
+  <body>
     <h1>Panneau de contrôle - Capra 6</h1>
     <div>
-      <label for="host">Host:</label>
-      <input type="text" id="host" value="localhost" style="background:#ff0000;"/><br />
-      <label for="port">Port:</label>
+      Host: <input type="text" id="host" value="localhost" style="background:#ff0000;"/><br />
+      Port: <input type="text" id="port" value="53002" style="background:#ff0000;"/><br />
     </div>
     
     <div>
-      <input type="text" id="port" value="53002" style="background:#ff0000;"/><br />
       <input type="submit" id="open" value="Connect" /> <br /> <br/>
-      <input type="checkbox" value="toggle" onclick="update(this, 0)" />Lumières<br/>
-      <input type="checkbox" value="toggle" onclick="update(this, 1)" />GPS<br/>
-      <input type="checkbox" value="toggle" onclick="update(this, 2)" />Fans<br/>
-      <input type="checkbox" value="toggle" onclick="update(this, 3)" />Imu<br/>
-      <input type="checkbox" value="toggle" onclick="update(this, 4)" />Caméra<br/>
-      <input type="checkbox" value="toggle" onclick="update(this, 5)" />Switch Ethernet<br/>
-      <input type="checkbox" value="toggle" onclick="update(this, 6)" />Rangefinder<br/>
-      <input type="checkbox" value="toggle" onclick="update(this, 7)" />Tension<br/>
-      <input type="checkbox" value="toggle" onclick="update(this, 8)" />Courant<br/>
-      <input type="checkbox" value="toggle" onclick="update(this, 9)" />Température<br/>
-      <input type="checkbox" value="toggle" onclick="update(this, 10)" />E-Stop manuel<br/>
-      <input type="checkbox" value="toggle" onclick="update(this, 11)" />E-Stop automatique<br/>
-      <input type="checkbox" value="toggle" onclick="update(this, 12)" />Mode autonome (non supporté)<br/>
-      
-      
+      <input type="checkbox" id="lights" onclick="update(this, 0)" />Lumières<br/>
+      <input type="checkbox" id="gps" onclick="update(this, 1)" />GPS<br/>
+      <input type="checkbox" id="fan" onclick="update(this, 2)" />Fans<br/>
+      <input type="checkbox" id="imu" onclick="update(this, 3)" />Imu<br/>
+      <input type="checkbox" id="camera" onclick="update(this, 4)" />Caméra<br/>
+      <input type="checkbox" id="switch" onclick="update(this, 5)" />Switch Ethernet<br/>
+      <input type="checkbox" id="rangefinder" onclick="update(this, 6)" />Rangefinder<br/>
+      <input type="checkbox" id="estopManual" onclick="update(this, 10)" DISABLED/>E-Stop manuel<br/>
+      <input type="checkbox" id="estopRemote" onclick="update(this, 11)" DISABLED/>E-Stop automatique<br/>
+      <input type="checkbox" id="mode" onclick="update(this, 12)" DISABLED/>Mode autonome (non supporté)<br/>
+           
       <br/><br/>
-      <input type="button" id="getCurrent" value="Courant" onclick="current()"/>
-      <input type="button" id="getTemperature" value="Température" onclick="temperature()"/>
-      <input type="button" id="getCurrent" value="Tension" onclick="tension()"/>
+      Current: <input type="text" id="current" size=10 /> A<br/>
+      Tension: <input type="text" id="tension" size=10 /> V<br/>
+      Temperature: <input type="text" id="temperature" size=10 /> deg. C<br/>
     </div>
     </div>
   </body>

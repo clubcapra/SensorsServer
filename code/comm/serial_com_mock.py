@@ -15,7 +15,7 @@ class SerialComMock:
 
 
     def read(self, size):
-        return "mock-lecture"
+        return "ON"
 
 
     def write(self, data):

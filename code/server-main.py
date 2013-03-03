@@ -73,9 +73,11 @@ class SensorsClientHandler(SocketServer.BaseRequestHandler):
         if p1.match(data) is not None or p2.match(data) is not None:
             isValidCommand, message = comm.sendCommand(data)
             if not message == None:
+                reply = data.split(" ")[1] + " " + message
                 print "sending socket response: "
-                print message
-                self.request.send(message)
+                print reply
+                self.request.send(reply)
+
         else:
             print "Invalid command"
             self.request.send("Error: invalid message format\n")
@@ -115,15 +117,15 @@ class WSHandler(tornado.websocket.WebSocketHandler):
 
     def open(self):
         print 'new connection on websocket'
-        self.write_message("Capra 6: Bienvenue")
       
     def on_message(self, data):
         print 'websocket: message received %s' % data
         isValidCommand, message = comm.sendCommand(data)
         if not message == None:
-                print "sending websocket response: "
-                print message
-                self.write_message(message)
+            reply = data.split(" ")[1] + " " + message
+            print "sending socket response: "
+            print reply
+            self.write_message(reply)
  
     def on_close(self):
         print 'websocket connection closed'
