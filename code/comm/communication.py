@@ -3,18 +3,11 @@ import sys
 import traceback
 
 import config
+import re
 from serial_com import SerialCom
 
-class Debug:
-    def write(self, values):
-        for value in values:
-            print hex(ord(value)) + ",",
-        print "\n"
-
-
-class NoDebug:
-    def write(self, values):
-        pass
+#singleton style
+global instance
 
 # http://clubcapra.com/wiki/index.php/Contr%C3%B4leur_d%27alimentation
 class Communication:
@@ -24,48 +17,64 @@ class Communication:
     """
     def __init__(self, SerialComInstance = SerialCom()):
         self.serial  = SerialComInstance
-
-
-    def init(self):
-
-        if config.debug is True:
-            self.debug = Debug()
+        
+    def start(self):
+                
         self.serial.connect( \
                 config.serial_port, \
                 config.baudrate, \
                 config.readTimeout)
 
-
     def shutdown(self):
-        print "Closing serial connection."
+        print "communication: Closing serial connection."
         self.serial.close()
 
 
-    def sendCommand(self, command):
-        parts = string.split(command, " ")
+    def send_command(self, command_to_send):
+        p1 = re.compile("[SETset]+ [0-9a-zA-Z]+ [ONFonf]+")
+        p2 = re.compile("[GETget]+ [0-9a-zA-Z]+")
+        
+        if p1.match(command_to_send) is None and p2.match(command_to_send) is None:
+            print "communication: Invalid command"
+            return False, self.help()
+        
+        parts = string.split(command_to_send, " ")
 
         command = parts[0].upper()
         deviceId = self.get_sensor_addr(parts[1])
         if len(parts) > 2:
             state = parts[2]
 
-        try:
-            if command == "SET":
+        #SET stuff
+        if command == "SET":
+            try:
                 self.serial.write(command + " " + str(deviceId) + " " + state.upper() + "\n")
-                return True, None
-
-            if command == "GET":
+                return True, None                
+            except:
+                traceback.print_exc(file=sys.stdout)
+                return False, self.help()
+        
+        #GET stuff
+        if command == "GET":
+            try:
                 self.serial.write(command + " " + str(deviceId) + " " + "\n")
-                print "reading"
-                statusInformation = self.serial.read(1024)
-                print "read"
-                return True, statusInformation
+                reply = self.serial.read(1024)
+                print "Communication: read from serial port:'" + reply + "'"
+            except:
+                traceback.print_exc(file=sys.stdout)
+                return False, self.help()
+        
+            if reply == None:
+                print "Communication: Invalid command"
+                return False, None
+        
+            reply = command_to_send.split(" ")[1] + " " + reply
+            
+            if reply == "":
+                print "Communication: Empty response from hardware"
                 
-        except:
-            traceback.print_exc(file=sys.stdout)
-            return False, self.help()
+            return True, reply
 
-        return False, self.help()
 
     def get_sensor_addr(self, name):
         for var, value in vars(config).items():

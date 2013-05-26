@@ -3,8 +3,6 @@
 # http://clubcapra.com/wiki/index.php/Contr%C3%B4leur_d%27alimentation
 
 import serial
-import time
-
 
 def debug():
     pass
@@ -25,12 +23,14 @@ class SerialCom:
                 readTimeout)
         
     def write(self, data):
-        print "writing:" + data
+        print "serialcom: writing:'" + data + "'"
         print self.port.isOpen();
         self.port.write(data)
 
     def read(self, size):
-        return self.port.read(size)
+        reply = self.port.read(size)
+        print "serialcom: read:'" + reply + "'"
+        return 
 
     def close(self):
         self.port.close()

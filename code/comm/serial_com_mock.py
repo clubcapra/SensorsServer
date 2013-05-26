@@ -1,4 +1,7 @@
 
+#singleton style
+instance = None
+
 class SerialComMock:
 
     def __init__(self):

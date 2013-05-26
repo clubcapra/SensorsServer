@@ -39,7 +39,6 @@
             for(var i = 0; i < analogs.length; i++){
                 ws.send("get " + analogs[i]);      
             }
-            
         }
 
         function update(checkbox, id){
@@ -49,23 +48,11 @@
                 ws.send("set " + sensors[id] +  " off");
             }
         }
-       
-        
-        function tension(){
-            ws.send("get tension");
-        }
-        
-        function temperature(){
-            ws.send("get temperature");
-        }
-        
-        function current(){
-            ws.send("get current");
-        }
-        
+
         function onoff2bool(onoff){
-            if(onoff.indexof("ON") != -1)
+            if(onoff.indexOf("ON") !== -1){
                 return true;
+                }
             else
                 return false;
         }
