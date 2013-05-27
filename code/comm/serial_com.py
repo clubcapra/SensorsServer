@@ -10,7 +10,7 @@ def debug():
 
 class SerialCom:
 
-    def __init__(self):
+    def __init__(self): 
         pass
 
     def connect(self, port, baudrate, readTimeout):
@@ -24,7 +24,7 @@ class SerialCom:
         
     def write(self, data):
         print "serialcom: writing:'" + data + "'"
-        print self.port.isOpen();
+        #print self.port.isOpen();
         self.port.write(data)
 
     def read(self, size):

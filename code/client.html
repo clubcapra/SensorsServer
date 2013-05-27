@@ -89,11 +89,15 @@
                     }
                 }
             }else{        
-                alert("Unknown input received:" + evt.data);
+                alert("Cannot parse data from server:" + evt.data);
             }
           };
  
-          ws.onclose = function(evt) { alert("Panneau de contrôle déconnecté"); };
+          ws.onclose = function(evt) {             
+            $("#host").css("background", "#ff0000"); 
+            $("#port").css("background", "#ff0000"); 
+            $("#uri").css("background", "#ff0000"); 
+          };
  
           ws.onopen = function(evt) { 
             $("#host").css("background", "#00ff00"); 

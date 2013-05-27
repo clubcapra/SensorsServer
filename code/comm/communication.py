@@ -49,8 +49,13 @@ class Communication:
         #SET stuff
         if command == "SET":
             try:
-                self.serial.write(command + " " + str(deviceId) + " " + state.upper() + "\n")
-                return True, None                
+                try:
+                    self.serial.write(command + " " + str(deviceId) + " " + state.upper() + "\n")
+                except:
+                    print "communication: error writing to serial port"
+                    return False, None
+                
+                return True, None
             except:
                 traceback.print_exc(file=sys.stdout)
                 return False, self.help()
@@ -59,8 +64,12 @@ class Communication:
         if command == "GET":
             try:
                 self.serial.write(command + " " + str(deviceId) + " " + "\n")
+            except:
+                print "communication: error writing to serial port"
+                return False, None
+            
+            try:
                 reply = self.serial.read(1024)
-                print "Communication: read from serial port:'" + reply + "'"
             except:
                 traceback.print_exc(file=sys.stdout)
                 return False, self.help()
@@ -69,10 +78,10 @@ class Communication:
                 print "Communication: Invalid command"
                 return False, None
         
-            reply = command_to_send.split(" ")[1] + " " + reply
-            
             if reply == "":
-                print "Communication: Empty response from hardware"
+                print "Communication: WARNING - Empty response from hardware"
+        
+            reply = command_to_send.split(" ")[1] + " " + reply
                 
             return True, reply
 

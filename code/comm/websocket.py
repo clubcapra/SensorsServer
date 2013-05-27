@@ -12,12 +12,16 @@ class WSHandler(tornado.websocket.WebSocketHandler):
         print 'websocket: new connection'
       
     def on_message(self, data):
-        print 'websocket: data received %s' % data
+        print ""
+        print "websocket: command received '" + data + "'"
         
         status, reply = communication.instance.send_command(data)
         
+        if not status:
+            reply = "communication error"
+        
         if reply is not None:
-            print "websocket: sending response to client: " + reply
+            print "websocket: sending response to client: '" + reply + "'"
             self.write_message(reply)
  
     def on_close(self):

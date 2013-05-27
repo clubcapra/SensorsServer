@@ -45,7 +45,8 @@ class SensorsClientHandler(SocketServer.BaseRequestHandler):
         while not data:
             data = self.request.recv(1024)
 
-        print "tcpsocket: data received:' " + str(data) + "'"
+        print ''
+        print "tcpsocket: command received:' " + str(data) + "'"
         
         data = data.replace("\n", "")
         
@@ -57,7 +58,10 @@ class SensorsClientHandler(SocketServer.BaseRequestHandler):
         
         status, reply = communication.instance.send_command(data)
         
+        if not status:
+            reply = "communication error"
+        
         if reply is not None:
-            print "tcpsocket: sending response to client: " + reply
+            print "tcpsocket: sending response to client: '" + reply + "'"
             self.request.send(reply)
         
