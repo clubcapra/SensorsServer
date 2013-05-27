@@ -1,13 +1,12 @@
 # true or false
-simulation=True
+simulation=False
 
 # The default baudrate is 19200. 
 # It should not change since its defined this way on the hardware.
 
-serial_port="/dev/ttyUSB2004"
+serial_port="/dev/ttyUSB0"
 baudrate=19200
 readTimeout=0.2 #en sec
-debug=True
 
 # TCP server
 use_tcp_server=True

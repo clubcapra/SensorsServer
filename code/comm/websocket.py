@@ -24,9 +24,12 @@ class WSHandler(tornado.websocket.WebSocketHandler):
         print 'websocket connection closed'
  
 class WebsocketServer:
-    def __init__(self, port):
+    def __init__(self):
+        pass
+    
+    def start(self, port):
         print "websocket: opening on port " + str(port)
         application = tornado.web.Application([(r'/ws', WSHandler), ])
-        http_server = tornado.httpserver.HTTPServer(application)
-        http_server.listen(port)
+        self.http_server = tornado.httpserver.HTTPServer(application)
+        self.http_server.listen(port)
         tornado.ioloop.IOLoop.instance().start()

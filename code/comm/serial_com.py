@@ -30,7 +30,7 @@ class SerialCom:
     def read(self, size):
         reply = self.port.read(size)
         print "serialcom: read:'" + reply + "'"
-        return 
+        return reply
 
     def close(self):
         self.port.close()

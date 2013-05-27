@@ -8,6 +8,7 @@ from serial_com import SerialCom
 
 #singleton style
 global instance
+global stop_all
 
 # http://clubcapra.com/wiki/index.php/Contr%C3%B4leur_d%27alimentation
 class Communication:
