@@ -6,7 +6,7 @@ simulation=False
 
 serial_port="/dev/ttyUSB2004"
 baudrate=19200
-readTimeout=0.2 #en sec
+readTimeout=0.03 #en sec
 
 # TCP server
 use_tcp_server=True
