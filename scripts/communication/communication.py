@@ -4,6 +4,7 @@ import traceback
 
 import re
 from serial_com import SerialCom
+import config
 
 #singleton style
 global instance
