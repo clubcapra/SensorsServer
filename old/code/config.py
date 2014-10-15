@@ -1,10 +1,10 @@
 # true or false
-simulation=False
+simulation=True
 
 # The default baudrate is 19200. 
 # It should not change since its defined this way on the hardware.
 
-serial_port="/dev/ttyUSB1000"
+serial_port="/dev/ttyUSB0"
 baudrate=19200
 readTimeout=0.03 #en sec
 
