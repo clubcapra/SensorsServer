@@ -4,7 +4,6 @@ import traceback
 
 import re
 from serial_com import SerialCom
-import config
 
 #singleton style
 global instance
@@ -16,12 +15,12 @@ class Communication:
     The communication class is responsible for responding to particular commands.
     A SerialComInstance can be pass to connect to a real serial or a mocked serial.
     """
-    def __init__(self, serial_port, baudrate, readTimeout=0.03, SerialComInstance = SerialCom()):
+    def __init__(self, dict, serial_port, baudrate, readTimeout=0.03, SerialComInstance = SerialCom()):
+        self.dict = dict
         self.serial_port = serial_port
         self.baudrate = baudrate
         self.readTimeout = readTimeout
         self.serial  = SerialComInstance
-        
     def start(self):
                 
         self.serial.connect( \
@@ -41,11 +40,14 @@ class Communication:
         if p1.match(command_to_send) is None and p2.match(command_to_send) is None:
             print "communication: Invalid command"
             return False, self.help()
-        ttyUSB0
+
         parts = string.split(command_to_send, " ")
 
         command = parts[0].upper()
         deviceId = self.get_sensor_addr(parts[1])
+        if deviceId == None:
+            return False, "Error: Device not in dictionnary"
+
         if len(parts) > 2:
             state = parts[2]
 
@@ -80,24 +82,21 @@ class Communication:
             if reply == None:
                 print "Communication: Invalid command"
                 return False, None
-        
-            if reply == "":
+            elif reply == "":
                 print "Communication: WARNING - Empty response from hardware"
-        
-            reply = command_to_send.split(" ")[1] + " " + reply
-                
-            return True, reply
+            else:
+                reply = command_to_send.split(" ")[1] + " " + reply
 
-# TODO remove refs to config	
+            return True, False
 
     def get_sensor_addr(self, name):
-        for var, value in vars(config).items():
+        for var, value in self.dict.items():
             if var.lower() == name.lower():
                 return value
     
     def get_all_sensors(self):
         devices = []
-        for name, value in vars(config).items():
+        for name, value in dict.items():
             if name[0] is not "_" and len(str(value)) == 2:
                 devices.append(name)
         return devices

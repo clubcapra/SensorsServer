@@ -9,7 +9,7 @@ baudrate=19200
 readTimeout=0.03 #en sec
 
 # TCP server
-use_tcp_server=True
+use_tcp_server=False
 tcp_port=53001
 
 # Websocket

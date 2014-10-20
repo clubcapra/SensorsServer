@@ -4,25 +4,21 @@ import tornado.websocket
 import tornado.ioloop
 import tornado.web
 
-import communication
 
 class WSHandler(tornado.websocket.WebSocketHandler):
 
     def open(self):
-        print 'websocket: new connection'
+      #  print 'websocket: new connection'
+        print "allo vincent"
       
     def on_message(self, data):
-        print ""
-        print "websocket: command received '" + data + "'"
-        
-        status, reply = communication.instance.send_command(data)
-        
-        if not status:
-            reply = "communication error"
-        
-        if reply is not None:
-            print "websocket: sending response to client: '" + reply + "'"
-            self.write_message(reply)
+        if data == "w":
+            print "EN AVANT"
+        elif data == "a":
+            print "gauche"
+        elif data == "d":
+            print "droite"
+        pass
  
     def on_close(self):
         print 'websocket connection closed'

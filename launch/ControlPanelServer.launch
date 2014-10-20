@@ -1,0 +1,23 @@
+<launch>
+    <node pkg="capra_controlpanel" name="capra_controlpanel" type="controlpanel_node.py" output="screen">
+        <param name="serial_port" value="/dev/pts/13"/>
+        <param name="watchdog_timeout" value="150"/>
+        <param name="speed_ratio" value="0.988, 1.0"/>
+        <param name="position_ratio" value="0.971617, 0.96157"/>
+        <rosparam param="sensor_ids">
+            fan: 0
+            imu: 1
+            camera: 2
+            gps: 3
+            switch: 4
+            lights: 5
+            rangefinder: 6
+            tension: 7
+            current: 8
+            temperature: 9
+            estopmanual: 10
+            estopremote: 11
+            mode: 12
+        </rosparam>
+    </node>
+</launch>
