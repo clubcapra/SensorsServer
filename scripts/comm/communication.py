@@ -22,12 +22,14 @@ class Communication:
         self.baudrate = baudrate
         self.readTimeout = readTimeout
         self.serial  = SerialComInstance
+
     def start(self):
                 
-        self.serial.connect( \
+        return self.serial.connect( \
                 self.serial_port, \
                 self.baudrate, \
                 self.readTimeout)
+
 
     def shutdown(self):
         rospy.loginfo( "communication: Closing serial connection.")

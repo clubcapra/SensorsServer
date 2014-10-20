@@ -15,13 +15,20 @@ class SerialCom:
         pass
 
     def connect(self, port, baudrate, readTimeout):
-        self.port = serial.Serial(
-                port, \
-                baudrate, \
-                serial.EIGHTBITS, \
-                serial.PARITY_NONE, \
-                serial.STOPBITS_ONE, \
-                readTimeout)
+
+        try:
+            self.port = serial.Serial(
+                    port, \
+                    baudrate, \
+                    serial.EIGHTBITS, \
+                    serial.PARITY_NONE, \
+                    serial.STOPBITS_ONE, \
+                    readTimeout)
+        except serial.SerialException:
+            rospy.logfatal("Unable to connect to port " + str(port))
+            return False
+
+        return True
         
     def write(self, data):
         rospy.logdebug( "serialcom: writing:'" + data + "'")

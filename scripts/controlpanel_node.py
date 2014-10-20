@@ -37,15 +37,18 @@ class ControlPanelServer:
         pub_robot_analog_values = rospy.Publisher("~analog_values", RobotAnalogValues, queue_size=10)
 
         ids = rospy.get_param('~sensor_ids')
-        #s_get = rospy.Service('capra_controlpanel/get', Get, handle_controlpanel_get)
         s_set = rospy.Service('capra_controlpanel/set', Set, handle_controlpanel_set)
 
         comm.communication.instance = Communication(ids, "/dev/pts/13", 19200)
-        comm.communication.instance.start()
+        success = comm.communication.instance.start()
+        if not success:
+            rospy.logfatal("Unable to start controlpanel node")
+            sys.exit()
         comm.communication.stop_all = False
 
-        r = rospy.Rate(1)
-        serial_wait = 0.02
+        rate = rospy.get_param('~publish_rate')
+        r = rospy.Rate(rate)
+        serial_wait = float(rospy.get_param('~serial_wait'))
 
         rospy.loginfo("Starting controlpanel. Serial polling slep: " + str(serial_wait) + " . Message rate(hz): " + str(r))
         while not rospy.is_shutdown():
