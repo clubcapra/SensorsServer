@@ -10,4 +10,4 @@ The node also publishes on 2 topics:
 * The /capra_controlpanel/analog_values uses RobotAnalogValues messages;
 * The /capra_controlpanel/buttons uses RobotButtons messages.
 
-The publish rate of these values can be adjusted in the launch file.
+The publish rate of these values and the serial port can be adjusted in the launch file.
