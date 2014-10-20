@@ -10,7 +10,7 @@ from comm.communication import Communication
 import time
 
 def handle_controlpanel_set(req):
-    print "got call SET with param " + req.name + " and " + str(req.state)
+    rospy.logdebug("got call SET with param " + req.name + " and " + str(req.state))
     
     cmd = "ON"
     if req.state is False:
@@ -24,7 +24,7 @@ def handle_controlpanel_set(req):
     if reply is None:
         reply = ""
     else:
-        print "handle_controlpanel_set: sending response to client: '" + reply + "'"
+        rospy.logdebug("handle_controlpanel_set: sending response to client: '" + reply + "'")
 
     return True
     
@@ -32,6 +32,7 @@ class ControlPanelServer:
 
     def __init__(self):
         rospy.init_node('capra_controlpanel')
+        rospy.set_param
         pub_robot_buttons = rospy.Publisher("~buttons", RobotButtons, queue_size=10)
         pub_robot_analog_values = rospy.Publisher("~analog_values", RobotAnalogValues, queue_size=10)
 
@@ -45,7 +46,8 @@ class ControlPanelServer:
 
         r = rospy.Rate(1)
         serial_wait = 0.02
-        print "Starting...."
+
+        rospy.loginfo("Starting controlpanel. Serial polling slep: " + str(serial_wait) + " . Message rate(hz): " + str(r))
         while not rospy.is_shutdown():
 
             #Read button data
@@ -55,7 +57,7 @@ class ControlPanelServer:
                 status, reply = comm.communication.instance.send_command("GET " + field)
 
                 if status is False:
-                    print "Error reading '" + field + "': " + reply
+                    rospy.logerr("Error reading '" + field + "': " + reply)
                 else:
                     if type(robot_buttons.__getattribute__(field)) is bool:
                         robot_buttons.__setattr__(field, bool(reply))
@@ -73,7 +75,7 @@ class ControlPanelServer:
                 status, reply = comm.communication.instance.send_command("GET " + field)
 
                 if status is False:
-                    print "Error reading '" + field + "': " + reply
+                    rospy.logerr( "Error reading '" + field + "': " + reply)
                 else:
                     robot_analog_values.__setattr__(field, float(reply))
 

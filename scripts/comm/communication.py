@@ -1,6 +1,7 @@
 import string
 import sys
 import traceback
+import rospy
 
 import re
 from serial_com import SerialCom
@@ -29,7 +30,7 @@ class Communication:
                 self.readTimeout)
 
     def shutdown(self):
-        print "communication: Closing serial connection."
+        rospy.loginfo( "communication: Closing serial connection.")
         self.serial.close()
 
 
@@ -38,7 +39,7 @@ class Communication:
         p2 = re.compile("[GETget]+ [0-9a-zA-Z]+")
         
         if p1.match(command_to_send) is None and p2.match(command_to_send) is None:
-            print "communication: Invalid command"
+            rospy.logerr("communication: Invalid command")
             return False, self.help()
 
         parts = string.split(command_to_send, " ")
@@ -57,7 +58,7 @@ class Communication:
                 try:
                     self.serial.write(command + " " + str(deviceId) + " " + state.upper() + "\n")
                 except:
-                    print "communication: error writing to serial port"
+                    rospy.logerr( "communication: error writing to serial port")
                     return False, None
                 
                 return True, None
@@ -70,7 +71,7 @@ class Communication:
             try:
                 self.serial.write(command + " " + str(deviceId) + " " + "\n")
             except:
-                print "communication: error writing to serial port"
+                rospy.logerr( "communication: error writing to serial port")
                 return False, None
             
             try:
@@ -80,10 +81,10 @@ class Communication:
                 return False, self.help()
         
             if reply == None:
-                print "Communication: Invalid command"
+                rospy.logerr( "Communication: Invalid command")
                 return False, None
             elif reply == "":
-                print "Communication: WARNING - Empty response from hardware"
+                rospy.logerr( "Communication: WARNING - Empty response from hardware")
             else:
                 reply = command_to_send.split(" ")[1] + " " + reply
 

@@ -3,6 +3,7 @@
 # http://clubcapra.com/wiki/index.php/Contr%C3%B4leur_d%27alimentation
 
 import serial
+import rospy
 
 def debug():
     pass
@@ -23,13 +24,13 @@ class SerialCom:
                 readTimeout)
         
     def write(self, data):
-        print "serialcom: writing:'" + data + "'"
+        rospy.logdebug( "serialcom: writing:'" + data + "'")
         #print self.port.isOpen();
         self.port.write(data)
 
     def read(self, size):
         reply = self.port.read(size)
-        print "serialcom: read:'" + reply + "'"
+        rospy.logdebug( "serialcom: read:'" + reply + "'")
         return reply
 
     def close(self):
