@@ -44,6 +44,8 @@ class ControlPanelServer:
         if not success:
             rospy.logfatal("Unable to start controlpanel node")
             sys.exit()
+        else:
+            rospy.loginfo("Controlpanel connected to serial port")
         comm.communication.stop_all = False
 
         rate = rospy.get_param('~publish_rate')

@@ -1,6 +1,6 @@
 <launch>
     <node pkg="capra_controlpanel" name="capra_controlpanel" type="controlpanel_node.py" output="screen">
-        <param name="serial_port" value="/dev/pts/7"/>
+        <param name="serial_port" value="/dev/pts/17"/>
         <param name="publish_rate" value="1"/>
         <param name="serial_wait"  value="0.02" />
         <rosparam param="sensor_ids">
