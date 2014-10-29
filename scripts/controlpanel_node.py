@@ -39,7 +39,7 @@ class ControlPanelServer:
         ids = rospy.get_param('~sensor_ids')
         s_set = rospy.Service('capra_controlpanel/set', Set, handle_controlpanel_set)
 
-        comm.communication.instance = Communication(ids, "/dev/pts/13", 19200)
+        comm.communication.instance = Communication(ids, rospy.get_param('~serial_port'), 19200)
         success = comm.communication.instance.start()
         if not success:
             rospy.logfatal("Unable to start controlpanel node")
