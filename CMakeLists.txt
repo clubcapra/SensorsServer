@@ -55,6 +55,7 @@ find_package(catkin REQUIRED COMPONENTS
 add_service_files(
   FILES
   Set.srv
+  Flash.srv
 )
 
 ## Generate actions in the 'action' folder
